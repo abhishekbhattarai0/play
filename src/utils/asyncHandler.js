@@ -1,6 +1,6 @@
 //high order function :-> those function which can accept as parameter and can return function
 const asyncHandler = (requestHandler) => {
-    (req, res, next) => {
+    return (req, res, next) => {
         Promise.resolve(requestHandler(req, res, next))
             .catch( (err) => next(err))
     }
