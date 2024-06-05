@@ -20,7 +20,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
    const { username, email, fullname, password } = req.body;
    console.log("req.body", req.body)
-   console.log("email ", email)
+   
 
    if (
       [username, email, fullname, password].some((field) => field?.trim() === "")
@@ -29,7 +29,7 @@ const registerUser = asyncHandler(async (req, res) => {
    }
    // you can write many validation if you like like email validation. In production seperate validation file is made with seperate validation method which is imported here to call
 
-   const existedUser = User.findOne({
+   const existedUser = await User.findOne({
       $or: [{ username }, { email }]
    })
 
@@ -37,12 +37,19 @@ const registerUser = asyncHandler(async (req, res) => {
       throw new ApiError(409, "User with email or username alredy exists")
    }
 
+
    const avatarLocalPath = req.files?.avatar[0]?.path;
-   const coverImageLocalPath = req.files?.coverImage[0]?.path;
+   // const coverImageLocalPath = req.files?.coverImage[0]?.path;
 
    if (!avatarLocalPath) {
       throw new ApiError(400, "Avatar file is Required")
    }
+
+   let coverImageLocalPath;
+   if (req.files && Array.isArray(req.files.coverImage)&& req.files.coverImage.length > 0 ){
+      coverImageLocalPath = req.files.coverImage[0].path
+   }
+
 
    const avatar = await uploadOnCloudinary(avatarLocalPath)
    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
@@ -51,6 +58,7 @@ const registerUser = asyncHandler(async (req, res) => {
       throw new ApiError(400, "Avatar file is required")
    }
 
+   
    const user = await User.create({
       username: username.toLowerCase(), 
       email, 
