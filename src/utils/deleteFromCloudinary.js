@@ -9,6 +9,7 @@ cloudinary.config({
 
 const deleteFromCloudinary = async(filePath) => {
     try {
+        console.log("File path from delete", filePath)
         const publicId = filePath.split("/")[7].split(".")[0]
 
         if(!publicId) return null;
@@ -18,7 +19,7 @@ const deleteFromCloudinary = async(filePath) => {
 
         return response;
     } catch (error) {
-        ApiError(500, "Something went wrong while deleting")
+        throw new ApiError(500, "Something went wrong while deleting file")
     }
 
 }
