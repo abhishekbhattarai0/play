@@ -4,6 +4,7 @@ import { User } from '../models/user.model.js'
 import { uploadOnCloudinary } from '../utils/cloudinary.js'
 import { ApiResponse } from '../utils/ApiResponse.js'
 import jwt from 'jsonwebtoken'
+import { deleteFromCloudinary } from '../utils/deleteFromCloudinary.js'
 
 const generateAccessAndRefreshToken = async(userId) => {
    try {
@@ -36,7 +37,8 @@ const registerUser = asyncHandler(async (req, res) => {
     */
    
    const { username, email, fullname, password } = req.body;
-   console.log("req.body", req.body)
+   console.log("req.body from here=> ", req.body, " Req files", req?.files)
+
    
 
    if (
@@ -70,6 +72,8 @@ const registerUser = asyncHandler(async (req, res) => {
 
    const avatar = await uploadOnCloudinary(avatarLocalPath)
    const coverImage = await uploadOnCloudinary(coverImageLocalPath)
+
+   console.log("Avatar from cloudinary: => ",avatar, "cover image :=>", coverImage)
 
    if(!avatar){
       throw new ApiError(400, "Avatar file is required")
@@ -150,6 +154,8 @@ const loginUser = asyncHandler(async (req, res) => {
       secure: true // by default cookie can be modified when we use httpOnly and secure true now only server modifiable
    }
 
+   console.log(" RefreshToken :",refreshToken, "AccessToken", accessToken)
+
    return res.status(200)
    .cookie("accessToken", accessToken, options)
    .cookie("refreshToken",refreshToken, options)
@@ -171,8 +177,8 @@ const logoutUser = asyncHandler( async(req, res) => {
    User.findByIdAndUpdate(
       req.user._id,
       {
-         $unset: {
-            refreshToken: 1, // this removes the field from document
+         $set: {
+            refreshToken: null,
          }
       },
       {
@@ -294,12 +300,18 @@ const updateUserAvatar = asyncHandler( async(req, res) => {
       throw new ApiError(400, "Avatar file is missing")
    }
 
-   // TODO: delete old image -assigment ( make a utils )
+   console.log("req ===>", req.files)
 
-   const avatar = uploadOnCloudinary(avatarLocalPath)
+   // TODO: delete old image -assigment ( make a utils )
+   // deleteFromCloudinary(req.)
+   const oldAvatar = req.user?.avatar
+   const avatar = await uploadOnCloudinary(avatarLocalPath)
+   const deleteAvatar = await deleteFromCloudinary(oldAvatar)
+   console.log("deleteAvatar me",deleteAvatar)
+   console.log("Old avatar ", oldAvatar)
 
    if(!avatar.url){
-      throw new ApiError(400, "Error while uploading on avatar")
+      throw new ApiError(400, "Error while uploading an avatar")
    }
 
    const user = await User.findByIdAndUpdate(

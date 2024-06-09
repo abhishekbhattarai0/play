@@ -40,7 +40,7 @@ router.route("/change-password").post(verifyJWT, changeCurrentUserPassword)
 router.route("/current-user").get(verifyJWT, getCurrentUser)
 router.route("/update-account").patch(verifyJWT,updateAccountDetails)
 router.route("/avatar").patch(verifyJWT, upload.single("avatar"), updateUserAvatar)
-router.route("cover-image").patch(verifyJWT, upload.single(coverImage), updateUserCoverImage)
+router.route("cover-image").patch(verifyJWT, upload.single("coverImage"), updateUserCoverImage)
 
 
 // when we are taking data from req.params we need to use colon(:) with variable name
