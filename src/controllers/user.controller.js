@@ -119,7 +119,6 @@ const loginUser = asyncHandler(async (req, res) => {
 
    console.log(" Req : ", req)
    const {email, username, password } = req.body;
-   console.log("email: ", req.body);
 
 
    if( !(username || email)) {
