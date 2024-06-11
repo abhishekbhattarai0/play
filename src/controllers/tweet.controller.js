@@ -18,7 +18,6 @@ const createTweet = asyncHandler(async (req, res) => {
     console.log("inside the tweet controller")
     const {content }= req.body
 
-    console.log(content)
 
     if(!content) {
         throw new ApiError(400, "Content field cannot be empty")
@@ -47,29 +46,40 @@ const createTweet = asyncHandler(async (req, res) => {
 
 const getUserTweets = asyncHandler(async (req, res) => {
     // TODO: get user tweets
+    const userId = req.user?._id
+    const tweet = await Tweet.find({owner: userId})
+
+    if( !tweet) {
+        throw new ApiError(404, "Tweets not found")
+    }
+
+    res.json( new ApiResponse(200, tweet, "Tweets retrieved successfully"))
     
 })
 
 const updateTweet = asyncHandler(async (req, res) => {
     //TODO: update tweet
-    const content = req.body.content
-    console.log(" content", req.body.content, req.body.newContent)
-    if(!content){
+    const {newContent} = req.body
+    const {tweetid} = req.params
+
+    console.log(" content", req.body, req.body.newcontent)
+    if(!newContent){
         throw new ApiError(400, "Content field is empty")
     }
-    const owner = req.user._id
-    console.log("Owner ", req.user._id)
 
     const tweet = await Tweet.findOneAndUpdate(
-        {owner},
+        { _id:tweetid},
         {
-            content: content,
+            content: newContent,
         },
         {
             new: true
         }
     )
 
+    if(!tweet) {
+        throw new ApiError(404, "tweet not found")
+    }
     return res.json(
         new ApiResponse(200, tweet, "Tweet edited successfully")
     )
