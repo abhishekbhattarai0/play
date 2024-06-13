@@ -4,9 +4,9 @@ import { createTweet, deleteTweet, getUserTweets, updateTweet } from "../control
 
 const router = Router()
 
-router.route("/create-tweet").post(verifyJWT, createTweet)
-router.route("/user-tweets").get(verifyJWT, getUserTweets)
-router.route("/update-tweet/:tweetid").patch(verifyJWT, updateTweet)
-router.route("/delete-tweet/:tweetid").delete(verifyJWT, deleteTweet)
+router.route("/").post(verifyJWT, createTweet)
+router.route("/users").get(verifyJWT, getUserTweets)
+router.route("/:tweetId").patch(verifyJWT, updateTweet).delete(verifyJWT, deleteTweet)
+
 
 export default router

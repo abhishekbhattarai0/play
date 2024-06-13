@@ -21,9 +21,13 @@ app.use(cookieParser())
 
 import userRouter from './routes/user.route.js'
 import tweetRouter from './routes/tweet.route.js'
+import likeRouter from './routes/like.route.js'
+import videoRouter from './routes/video.route.js'
 
 //routes declaration
 app.use("/api/v1/users", userRouter)
 app.use("/api/v1/tweets", tweetRouter)
+app.use("/api/v1/likes", likeRouter)
+app.use("/api/v1/videos", videoRouter)
 //http://localhost/api/v1/users/register
 export {app}

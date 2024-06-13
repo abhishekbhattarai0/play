@@ -18,3 +18,5 @@ const likeSchema = new Schema({
         ref: "User"
     }
 },{timestamps: true})
+
+export const Like = mongoose.model("Like",likeSchema)

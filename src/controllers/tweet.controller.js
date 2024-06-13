@@ -45,8 +45,12 @@ const createTweet = asyncHandler(async (req, res) => {
 })
 
 const getUserTweets = asyncHandler(async (req, res) => {
-    // TODO: get user tweets
+    //TODO: response should contain avatar , username
     const userId = req.user?._id
+
+    if(!isValidObjectId(userId)){
+        throw new ApiError(400, "Invalid object id")
+    }
     const tweet = await Tweet.find({owner: userId})
 
     if( !tweet) {
@@ -58,9 +62,12 @@ const getUserTweets = asyncHandler(async (req, res) => {
 })
 
 const updateTweet = asyncHandler(async (req, res) => {
-    //TODO: update tweet
+    const {tweetId} = req.params
     const {newContent} = req.body
-    const {tweetid} = req.params
+
+    if(!isValidObjectId(tweetId)){
+        throw new ApiError(400, "Invalid object id")
+    }
 
     console.log(" content", req.body, req.body.newcontent)
     if(!newContent){
@@ -68,7 +75,7 @@ const updateTweet = asyncHandler(async (req, res) => {
     }
 
     const tweet = await Tweet.findOneAndUpdate(
-        { _id:tweetid},
+        { _id:tweetId},
         {
             content: newContent,
         },
@@ -86,14 +93,16 @@ const updateTweet = asyncHandler(async (req, res) => {
 })
 
 const deleteTweet = asyncHandler(async (req, res) => {
-    //TODO: delete tweet
-    const tweetId = req.params.tweetid
+    const tweetId = req.params.tweetId
     console.log("Params", tweetId, "\n\n\nparams req ",req.params)
 
     if(!tweetId){
         throw new ApiError(400, "Tweet id field is empty")
     }
 
+    if(!isValidObjectId(tweetId)){
+        throw new ApiError(400, "Invalid object id")
+    }
     const tweet = await Tweet.findByIdAndDelete(tweetId)
     if( !tweet) {
         ApiError( 400, "Tweet not found")

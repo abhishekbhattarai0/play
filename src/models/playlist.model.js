@@ -20,3 +20,5 @@ const playlistSchema = new Schema({
         ref: "User"
     }
 }, {timestamps: true})
+
+export const Playlist = mongoose.model("Playlist", playlistSchema)
