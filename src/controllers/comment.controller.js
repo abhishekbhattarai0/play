@@ -39,10 +39,42 @@ const addComment = asyncHandler(async (req, res) => {
 
 const updateComment = asyncHandler(async (req, res) => {
     // TODO: update a comment
+    const { commentId } = req.params
+    const { content } = req.body
+
+    if( !commentId && !content){
+        throw new ApiError(400, "comment Id and content are required")
+    }
+
+    const updatedComment = await Comment.findByIdAndUpdate( commentId, { content}, { new : true})
+
+    if( !updatedComment){
+        throw new ApiError(400, "Something went wrong while deleting comment")
+    }
+    console.log(updateComment)
+
+    return res 
+    .status(200)
+    .json(new ApiResponse(200, updateComment, " Comment updated"))
 })
 
 const deleteComment = asyncHandler(async (req, res) => {
-    // TODO: delete a comment
+    const { commentId} = req.params
+    console.log("Params", req.params)
+    
+    if(!commentId){
+        throw new ApiError(400, "Comment Id required to delete")
+    }
+
+    const comment = await Comment.findByIdAndDelete(commentId)
+
+    if( !comment) {
+        throw new ApiError(400, "Something went wrong while deleting comment")
+    }
+
+    return res
+    .status(200)
+    .json( new ApiResponse(200, "comment deleted successfully"))
 })
 
 export {
