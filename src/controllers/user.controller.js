@@ -103,6 +103,16 @@ const registerUser = asyncHandler(async (req, res) => {
 
 })
 
+const test = asyncHandler( async (req, res ) => {
+   try {
+      return res.status(200).json({
+         status: "Hello world",
+         message: "Hello world!"
+      })
+   } catch (error) {
+      throw new ApiError(401, error?.message||"Invalid refresh token")
+   }
+})
 
 const loginUser = asyncHandler(async (req, res) => {
    /**
@@ -153,7 +163,6 @@ const loginUser = asyncHandler(async (req, res) => {
       secure: true // by default cookie can be modified when we use httpOnly and secure true now only server modifiable
    }
 
-   console.log(" RefreshToken :",refreshToken, "AccessToken", accessToken)
 
    return res.status(200)
    .cookie("accessToken", accessToken, options)
@@ -494,6 +503,7 @@ const getWatchHistory = asyncHandler( async(req, res) => {
 })
 
 export { 
+   test,
    registerUser , 
    loginUser , 
    logoutUser,
