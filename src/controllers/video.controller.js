@@ -52,16 +52,20 @@ const publishAVideo = asyncHandler( async(req, res) => {
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
+    // const { videoId } = req.params
+    const userId = req.user?._id
 
-    console.log( " Video id", videoId)
     
-    if( !videoId ){
-        throw new ApiError(400, "Video Id is required")
+    // if( !videoId ){
+    //     throw new ApiError(400, "Video Id is required")
+    // }
+
+    if( !userId ){
+        throw new ApiError(400, "user Id is required")
     }
 
-    const video = await Video.findOne({ _id: videoId});
-    console.log(video)
+    // const video = await Video.findOne({ _id: videoId});
+    const video = await Video.find({ owner: userId});
 
 if( !video ) {
     throw new ApiError(400, "Can't find video")
@@ -74,10 +78,7 @@ if( !video ) {
 
 const updateVideo = asyncHandler(async (req, res) => {
     const { videoId } = req.params
-    console.log( " REQ ====>", req)
-    console.log(req.body)
     //TODO: update video details like title, description, thumbnail
-    console.log( " Req Body",req.body, req.params)
     const { title, description, thumbnail} = req.body
     
     if( !(title || description || thumbnail)) {
@@ -89,14 +90,11 @@ const updateVideo = asyncHandler(async (req, res) => {
        thumbnail = await uploadOnCloudinary(thumbnailLocalPath)
        
     }
-    console.log("\n\n1\n\n")
     const oldVideo = await Video.findById(videoId)
     const oldThumbnail = oldVideo.thumbnail
     if(oldThumbnail){
         await deleteFromCloudinary(oldThumbnail)
     }
-    console.log("\n\n1\n\n")
-    console.log(oldThumbnail)
 
     const video = await Video.findOneAndUpdate( 
         { _id: videoId},
@@ -121,7 +119,6 @@ const deleteVideo = asyncHandler(async (req, res) => {
     }
 
     const video = await Video.findByIdAndDelete(videoId)
-    console.log("video", video)
 
     if(!video){
         throw new ApiError(400, "Video doesnot exist")
@@ -157,12 +154,17 @@ const togglePublishStatus = asyncHandler(async (req, res) => {
     .json( new ApiResponse(200, video, "Publish toggled"))
 })
 
+const increaseViews = asyncHandler( async (req, res) => {
+    
+})
+
 export {
     publishAVideo,
     getAllVideos,
     getVideoById,
     updateVideo,
     deleteVideo,
-    togglePublishStatus
+    togglePublishStatus,
+    increaseViews
     
 }
