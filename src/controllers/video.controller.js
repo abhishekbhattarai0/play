@@ -52,20 +52,20 @@ const publishAVideo = asyncHandler( async(req, res) => {
 })
 
 const getVideoById = asyncHandler(async (req, res) => {
-    const { videoId } = req.params
-    // const userId = req.user?._id
+    // const { videoId } = req.params
+    const userId = req.user?._id
 
     
-    if( !videoId ){
-        throw new ApiError(400, "Video Id is required")
-    }
-
-    // if( !userId ){
-    //     throw new ApiError(400, "user Id is required")
+    // if( !videoId ){
+    //     throw new ApiError(400, "Video Id is required")
     // }
 
-    const video = await Video.findOne({ _id: videoId});
-    // const video = await Video.find({ owner: userId});
+    if( !userId ){
+        throw new ApiError(400, "user Id is required")
+    }
+
+    // const video = await Video.findOne({ _id: videoId});
+    const video = await Video.find({ owner: userId});
 
 if( !video ) {
     throw new ApiError(400, "Can't find video")
